@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title 'Gerer mes biens' %}
+
+{% block body %}
+
+	<div class="container mt-4">
+		<h1>Gerer les biens</h1>
+
+		{% for message in app.flashes('success') %}
+			<div  id="success-alert" class="alert alert-success">
+				{{message}}
+			</div>
+		{% endfor %}
+
+		<script>
+			// Dissimulez l'alerte de succès après 5 secondes (5000 millisecondes)
+			setTimeout(function() {
+				document.getElementById('success-alert').style.display = 'none';
+			}, 5000);
+		</script>
+
+		<table class="table table-striped">
+			<thead>
+				<tr></tr>
+			</thead>
+			<tbody>
+				{% for property in properties %}
+					<tr>
+						<td>{{property.title}}</td>
+						<td>
+                            <a href="{{ path('admin.property.edit', {id: property.id})}}" class="btn btn-secondary">Editer</a>
+							<form method="post" action="{{ path('admin.property.delete', {id: property.id}) }}" 
+								style="display: inline-block" onsubmit="return confirm('Etes vous vraiement sur ?')">
+								<input type="hidden" name="_method" value="DELETE"> 
+								{# permet de simuler une requete DELETE etant donne que les formulaire ne prenne pas compte que les requete POST et GET #}
+								<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ property.id) }}">
+								<button type="submit" class="btn btn-danger">Supprimer</button>
+							</form>
+                        </td>
+					</tr>
+				{% endfor %}
+
+			</tbody>
+		</thead>
+	</table>
+
+	<div class="d-flex justify-content-end">
+		<a href="{{path('admin.property.new')}}" class="btn btn-primary mt-3 ">Creer un nouveau bien</a>
+	</div>
+
+
+</div>{% endblock %}
