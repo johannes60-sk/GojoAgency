@@ -2,7 +2,8 @@ controllers:
     resource:  ../src/Controller/
     type: attribute
         
-  
+logout:
+    path: /logout
 
 
 # home:
