@@ -3,9 +3,52 @@
 {% block title 'Voir les biens' %}
 
 {% block body %}
-<div class="container text-center mt-3">
-    <h1>Voir Tous nos biens</h1>
-</div>
-    
-    
+
+	<div class="jumbotron bg-body-tertiary" style="height: 200px">
+		<div class="container col-md-8 offset-2" style="padding-top: 73px">
+
+			{{ form_start(form) }}
+
+			<div class="row">
+				<div class="col">
+					{{ form_row(form.minSurface) }}
+				</div>
+
+				<div class="col">
+					{{ form_row(form.maxPrice) }}
+				</div>
+				
+				<div class="col">
+					<button class="btn btn-outline-primary">Rechercher</button>
+				</div>
+			</div>
+
+			{{ form_end(form) }}
+
+		</div>
+	</div>
+	
+	<div class="container col-md-8 mt-3">
+		<h1 class="my-4">Voir Tous nos biens</h1>
+
+		<div class="row">
+			{% for property in properties %}
+
+				<div class="col-md-4">
+
+					{{ include('property/_property.html.twig') }}
+
+				</div>
+
+			{% endfor %}
+		</div>
+
+        <div class="Page navigation mb-4 ">
+             {{ knp_pagination_render(properties) }}
+        </div>
+
+
+	</div>
+
+
 {% endblock %}

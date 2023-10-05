@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Property;
+use App\Entity\PropertySearch;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
 
@@ -24,31 +26,46 @@ class PropertyRepository extends ServiceEntityRepository
 
     // ici ca creer une requete qui va recupere tout les enregistrement de la tab property 
     // pour lesquelles sold = false (recup des propriete pas encore vendu)
-    public function findAllVisible(): array
+    public function findAllVisibleQuery(PropertySearch $search): Query
     {
-        return $this->findVisibleQuerrry()
-                    ->getQuery()
-                    ->getResult();
+        $query = $this->findVisibleQuerrry();
+
+        if ($search->getMaxPrice()) {
+
+            $query = $query
+                ->andWhere('p.price < :maxPrice')
+                ->setParameter('maxPrice', $search->getMaxPrice());
+        }
+
+        if ($search->getMinSurface()) { 
+
+            $query = $query
+                ->andWhere('p.surface >= :minSurface')
+                ->setParameter('minSurface', $search->getMinSurface());
+        }
+
+        return $query->getQuery();
     }
 
     public function findLatest(): array
     {
         return $this->findVisibleQuerrry()
-                ->setMaxResults(4)
-                ->getQuery()
-                ->getResult();
-                
+            ->setMaxResults(4)
+            ->getQuery()
+            ->getResult();
+
     }
 
-    private function findVisibleQuerrry(): QueryBuilder {
+    private function findVisibleQuerrry(): QueryBuilder
+    {
 
         return $this->createQueryBuilder('p')
-                ->andWhere('p.sold = false');
+            ->andWhere('p.sold = false');
     }
 
-    
 
-//    /**
+
+    //    /**
 //     * @return Property[] Returns an array of Property objects
 //     */
 //    public function findByExampleField($value): array
@@ -63,7 +80,7 @@ class PropertyRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Property
+    //    public function findOneBySomeField($value): ?Property
 //    {
 //        return $this->createQueryBuilder('p')
 //            ->andWhere('p.exampleField = :val')
