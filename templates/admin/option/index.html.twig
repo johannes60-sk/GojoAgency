@@ -1,14 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title 'Gerer mes biens' %}
+{% block title 'Gerer les options' %}
 
 {% block body %}
 
 	<div class="container mt-4">
-		<h1 class="text-center my-4">Gerer les biens</h1>
+		<h1 class="text-center my-4">Gerer les options</h1>
 		
 		<div class="d-flex justify-content-end mb-4">
-			<a href="{{path('admin.property.new')}}" class="btn btn-primary mt-3 ">Creer un nouveau bien</a>
+			<a href="{{path('admin.option.new')}}" class="btn btn-primary mt-3 ">Creer une nouvelle option</a>
 		</div>
 
 		{% for message in app.flashes('success') %}
@@ -26,19 +26,19 @@
 
 		<table class="table table-striped">
 			<thead>
-				<tr></tr>
+				<tr>Nom</tr>
 			</thead>
 			<tbody>
-				{% for property in properties %}
+				{% for option in options %}
 					<tr>
-						<td>{{property.title}}</td>
+						<td>{{option.name}}</td>
 						<td>
-                            <a href="{{ path('admin.property.edit', {id: property.id})}}" class="btn btn-secondary">Editer</a>
-							<form method="post" action="{{ path('admin.property.delete', {id: property.id}) }}" 
+                            <a href="{{ path('admin.option.edit', {id: option.id})}}" class="btn btn-secondary">Editer</a>
+							<form method="post" action="{{ path('admin.option.delete', {id: option.id}) }}" 
 								style="display: inline-block" onsubmit="return confirm('Etes vous vraiement sur ?')">
 								<input type="hidden" name="_method" value="DELETE"> 
 								{# permet de simuler une requete DELETE etant donne que les formulaire ne prenne pas compte que les requete POST et GET #}
-								<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ property.id) }}">
+								<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ option.id) }}">
 								<button type="submit" class="btn btn-danger">Supprimer</button>
 							</form>
                         </td>
@@ -48,8 +48,8 @@
 		</thead>
 	</table>
 
-	<div class="Page navigation my-4 ">
-			{{ knp_pagination_render(properties) }}
-	</div>
+	{# <div class="Page navigation my-4 ">
+			{{ knp_pagination_render(options) }}
+	</div> #}
 
 </div>{% endblock %}

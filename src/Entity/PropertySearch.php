@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\PropertySearchRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -22,6 +23,12 @@ class PropertySearch
     #[ORM\Column]
     #[Assert\Range(min: 10, max: 400)]
     private ?int $minSurface = null;
+    private ?ArrayCollection $options; 
+
+    public function __construct(){
+
+        $this->options = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -50,5 +57,16 @@ class PropertySearch
         $this->minSurface = $minSurface;
 
         return $this;
+    }
+
+    public function getOptions(): ArrayCollection
+    {
+
+        return $this->options;
+    }
+
+    public function setOptions(ArrayCollection $options):void
+    {
+        $this->options = $options;
     }
 }

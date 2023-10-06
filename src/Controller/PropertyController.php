@@ -40,14 +40,12 @@ class PropertyController extends AbstractController {
         // if ($form->isSubmitted() && $form->isValid()) { 
             
         // }
-        
 
         $properties = $paginator->paginate(  //il prend en param la requete , la page courante et la limite 
             $this->repository->findAllVisibleQuery($search),
             $request->query->getInt('page', 1),
             12
         );
-
 
         // $property = new Property();
 

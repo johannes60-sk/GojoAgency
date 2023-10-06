@@ -1,4 +1,5 @@
-{# {{ form_start(form) }}
+
+{{ form_start(form) }}
          
         <div class="row">
 		<div class="col-md-4">{{ form_row(form.title) }}</div>
@@ -20,10 +21,18 @@
             <div class="col-md-2">{{ form_row(form.sold) }}</div>
         </div> 
 
-        {{ form_widget(form) }}  
+        <div class="row">
+            <div class="col md-8 option-select">{{ form_row(form.description) }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col md-8">{{ form_row(form.options) }}</div>
+        </div>
+
+        {# {{ form_rest(form) }}   #}
+
+     {# ici on met un boutton par defaut si c'est pas definie dans le include au niveau des autre pages ou on a inclu le _form.html.twig #}
 
          <button class="btn btn-primary my-3">{{ button|default('creer') }}</button>  
 
-        {{ form_end(form) }}  #}
-
-         {# ici on met un boutton par defaut si c'est pas definie dans le include au niveau des autre pages ou on a inclu le _form.html.twig #}
+        {{ form_end(form) }} 

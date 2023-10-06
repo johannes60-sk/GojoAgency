@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Knp\Component\Pager\PaginatorInterface;
 
 class AdminPropertyController extends AbstractController{
 
@@ -25,12 +26,24 @@ class AdminPropertyController extends AbstractController{
 
     #[Route("/admin", name: "admin.property.index")]
 
-    public function index(): Response
+    public function index(PaginatorInterface $paginator, Request $request): Response
     {
-        $properties =  $this->repository->findAll();
+        // $properties =  $this->repository->findAll();
 
-        return $this->render('admin/property/index.html.twig', compact('properties'));
+
+        $properties = $paginator->paginate(
+
+            $this->repository->findAllVisibleQuery(),
+            $request->query->getInt('page', 1),
+            12
+        );
+        
+
+        return $this->render('admin/property/index.html.twig',[
+            'properties' => $properties
+        ]);
     }
+
 
    #[Route("/admin/property/create", name: "admin.property.new")]
     public function new(Request $request) {

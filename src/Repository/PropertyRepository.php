@@ -26,23 +26,38 @@ class PropertyRepository extends ServiceEntityRepository
 
     // ici ca creer une requete qui va recupere tout les enregistrement de la tab property 
     // pour lesquelles sold = false (recup des propriete pas encore vendu)
-    public function findAllVisibleQuery(PropertySearch $search): Query
+    public function findAllVisibleQuery(PropertySearch $search = null): Query
     {
         $query = $this->findVisibleQuerrry();
 
-        if ($search->getMaxPrice()) {
+        if ($search && $search->getMaxPrice()) {
 
             $query = $query
                 ->andWhere('p.price < :maxPrice')
                 ->setParameter('maxPrice', $search->getMaxPrice());
         }
 
-        if ($search->getMinSurface()) { 
+        if ($search && $search->getMinSurface()) { 
 
             $query = $query
                 ->andWhere('p.surface >= :minSurface')
                 ->setParameter('minSurface', $search->getMinSurface());
         }
+
+        if($search->getOptions()->count() > 0){
+
+            $k = 0;
+            foreach ($search->getOptions() as $option) {
+
+                $k++;
+                $query = $query
+                    ->andWhere(":option$k MEMBER OF p.options")
+                    ->setParameter("option$k", $option);
+            }
+        }
+        // En résumé, ce code ci dessus construit dynamiquement une requête en fonction des options fournies dans
+        //  l'objet $search. Chaque option est vérifiée pour son appartenance à l'entité en cours de 
+        //  recherche, et cela est ajouté à la requête en utilisant andWhere
 
         return $query->getQuery();
     }
@@ -50,16 +65,17 @@ class PropertyRepository extends ServiceEntityRepository
     public function findLatest(): array
     {
         return $this->findVisibleQuerrry()
+            ->orderBy('p.created_at', 'DESC')
             ->setMaxResults(4)
             ->getQuery()
             ->getResult();
-
     }
 
     private function findVisibleQuerrry(): QueryBuilder
     {
 
         return $this->createQueryBuilder('p')
+            ->orderBy('p.created_at', 'DESC')
             ->andWhere('p.sold = false');
     }
 
