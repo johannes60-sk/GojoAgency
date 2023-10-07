@@ -6,6 +6,26 @@
 
 	<div class="jumbotron bg-body-secondary text-dark  rounded-3">
 		<div class="container-fluid px-0">
+
+		{% for message in app.flashes('success') %}
+			<div  id="success-alert" class="alert alert-success">
+				{{message}}
+			</div>
+		{% endfor %}
+
+		{% if not form.vars.valid %}
+			<div class="alert alert-danger">
+				Erreur dans le remplissement du formulaire
+			</div>
+		{% endif %}
+
+		<script>
+			// Dissimulez l'alerte de succès après 5 secondes (5000 millisecondes)
+			setTimeout(function() {
+				document.getElementById('success-alert').style.display = 'none';
+			}, 5000);
+		</script>
+
 			<div class="row">
 				<div class="col-md-7">
 					{% if property.filename %}

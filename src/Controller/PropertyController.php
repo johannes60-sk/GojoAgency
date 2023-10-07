@@ -15,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
+use App\Notification\ContactNotification;
 
 class PropertyController extends AbstractController
 {
@@ -80,7 +81,7 @@ class PropertyController extends AbstractController
 
     #[Route('/biens/{slug}/{id}', name: "property.show", requirements: ["slug" => "[a-z0-9\-]*"])]
 
-    public function show($id, string $slug, Request $request): Response
+    public function show($id, string $slug, Request $request, ContactNotification $notification): Response
     {
 
         $property = $this->repository->find($id);
@@ -107,9 +108,12 @@ class PropertyController extends AbstractController
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) { 
+
+            $notification->notify($contact);
+
             
-            $this->addFlash('success', 'Votre email a bien etet envoyer');
-            
+            $this->addFlash('success', 'Votre email a bien ete envoyer');
+
             return $this->redirectToRoute('property.show', [
                 'id' => $property->getId(),
                 'slug' => $property->getSlug()
