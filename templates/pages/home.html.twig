@@ -5,11 +5,7 @@
 {% block body %}
 	<div
 		class="container text-center mt-3">
-		{# <h1>Bienvenu chez <span class="fw-bold ">GOJOAGENCY</span></h1>
-				    <p class="text-start my-4">GOJOAGENCY est une agence immobilière dédiée à vous fournir des solutions immobilières sur mesure.
-				     Nous nous engageons à offrir un service professionnel et personnalisé à nos clients.
-				      Avec notre équipe expérimentée et passionnée, nous travaillons chaque jour pour vous accompagner dans la réalisation de vos projets immobiliers. 
-				      Que ce soit pour l'achat, la vente ou la location, chez GOJOAGENCY, votre satisfaction est notre priorité.</p> #}
+		
 		<section class="py-3 text-center container">
 			<div class="row py-lg-5">
 				<div class="col-lg-6 col-md-8 mx-auto">
@@ -29,64 +25,23 @@
 	</div>
 
 
-	<div class="album py-5 bg-body-tertiary">
+	<div class="album  bg-body-tertiary">
 		<div class="container">
 
-			<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+		<h1 class="text-center mb-5">Nos derniers bien</h1>
+
+			<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mb-5">
 				{% for property in properties %}
 
 					<div class="col">
-						<div class="card shadow-sm">
-							<svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveaspectratio="xMidYMid slice" focusable="false">
-								<title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text>
-							</svg>
-							<div class="card-body">
-								<h5 class="card-title ">
-									<h5>{{property.title}}</h5>
-								</h5>
-								<div class="card-text ">
-									{{property.city}}
-									({{property.PostalCode}})
-                                </div>
 
-								<div class="text-primary  fw-bold fs-5  mb-3">{{ property.formatedPrice }}$</div>
+						{{ include('property/_property.html.twig') }}
 
-								<div class="d-flex justify-content-between align-items-center">
-									<div class="btn-group">
-										<a href="{{path('property.show', {id: property.id, slug: property.slug})}}" class="btn btn-sm btn-outline-secondary">Voir</a>
-										{# <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button> #}
-									</div>
-									<small class="text-body-secondary">9 mins</small>
-								</div>
-							</div>
-						</div>
 					</div>
 
 				{% endfor %}
 			</div>
 		</div>
 	</div>
-
-	{# <div class="container">
-		<h2>Les derniers biens</h2>
-		<div class="row flex">
-			{% for property in properties %}
-				<div class="col-3">
-					<div class="card">
-						<div class="card-body">
-							<h5 class="card-title">
-								<a href="{{path('property.show', {id: property.id, slug: property.slug})}}">{{property.title}}</a>
-							</h5>
-						</div>
-						<p class="card-text px-3">{{property.city}}
-							({{property.PostalCode}})</p>
-						<div class="text-primary px-3 fw-bold fs-5">{{ property.formatedPrice }}$</div>
-					</div>
-				</div>
-			{% endfor %}
-		<div>
-        
-    </div> #}
-
 
 		{% endblock %}

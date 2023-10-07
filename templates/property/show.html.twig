@@ -7,24 +7,18 @@
 	<div class="jumbotron bg-body-secondary text-dark  rounded-3">
 		<div class="container-fluid px-0">
 
-		{% for message in app.flashes('success') %}
-			<div  id="success-alert" class="alert alert-success">
-				{{message}}
-			</div>
-		{% endfor %}
+			{% for message in app.flashes('success') %}
+				<div id="success-alert" class="alert alert-success">
+					{{message}}
+				</div>
+			{% endfor %}
 
-		{% if not form.vars.valid %}
-			<div class="alert alert-danger">
-				Erreur dans le remplissement du formulaire
-			</div>
-		{% endif %}
+			{% if not form.vars.valid %}
+				<div class="alert alert-danger" id="danger-alert">
+					Erreur dans le remplissement du formulaire
+				</div>
+			{% endif %}
 
-		<script>
-			// Dissimulez l'alerte de succès après 5 secondes (5000 millisecondes)
-			setTimeout(function() {
-				document.getElementById('success-alert').style.display = 'none';
-			}, 5000);
-		</script>
 
 			<div class="row">
 				<div class="col-md-7">
@@ -34,8 +28,8 @@
 
 					{% else %}
 						{# <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveaspectratio="xMidYMid slice" focusable="false">
-									<title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text>
-								</svg> #}
+																											<title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text>
+																										</svg> #}
 						<img src="/images/properties/empty.jpg " alt="card-img-top" style="width: 100%; height: 200px;">
 
 					{% endif %}
@@ -47,24 +41,24 @@
 						{{property.surface}}
 						m²</h2>
 					<div class="text-primary fs-4 fw-bold">{{ property.formatedPrice }}</div>
-					<a href="" class="btn btn-primary">Contacter l'agence</a>
-					<div id="contactForm" class="mt-4">
+					<a href="" class="btn btn-primary" id="contactButton" {% if form.vars.submitted %} style="display: none;" {% endif %}>Contacter l'agence</a>
+					<div id="contactForm" class="mt-4" {% if not form.vars.submitted %} style="display: none;" {% endif %}>
 						{{ form_start(form) }}
-							<div class="row">
-								<div class="col">{{ form_row(form.firstname) }}</div>
-								<div class="col">{{ form_row(form.lastname) }}</div>
-							</div>
-							<div class="row">
-								<div class="col">{{ form_row(form.phone) }}</div>
-								<div class="col">{{ form_row(form.email) }}</div>
-							</div>
+						<div class="row px-3">
+							<div class="col">{{ form_row(form.firstname) }}</div>
+							<div class="col">{{ form_row(form.lastname) }}</div>
+						</div>
+						<div class="row px-3">
+							<div class="col">{{ form_row(form.phone) }}</div>
+							<div class="col">{{ form_row(form.email) }}</div>
+						</div>
 
-							{{ form_rest(form) }}
+						<div class="px-3">{{ form_rest(form) }}</div>
 
-							<div class="form-group">
-								<button class="btn btn-primary">Envoyer</button>
-							</div>
-							
+						<div class="form-group">
+							<button class="btn btn-primary">Envoyer</button>
+						</div>
+
 						{{ form_end(form) }}
 					</div>
 				</div>
@@ -84,7 +78,8 @@
 				<table class="table table-striped">
 					<tr>
 						<td>Surface habitable</td>
-						<td>{{property.surface}} m²</td>
+						<td>{{property.surface}}
+							m²</td>
 					</tr>
 					<tr>
 						<td>Pieces</td>
