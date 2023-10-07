@@ -1,6 +1,9 @@
 <?php
+
 namespace App\Controller;
 
+use App\Entity\Contact;
+use App\Form\ContactType;
 use App\Entity\Property;
 use App\Entity\PropertySearch;
 use App\Form\PropertySearchType;
@@ -13,7 +16,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class PropertyController extends AbstractController {
+class PropertyController extends AbstractController
+{
 
     private $repository;
     private $entityManager;
@@ -29,16 +33,17 @@ class PropertyController extends AbstractController {
 
     #[Route('/biens', name: "property.index")]
 
-    public function index(PaginatorInterface $paginator, Request $request ): Response {
+    public function index(PaginatorInterface $paginator, Request $request): Response
+    {
 
         $search = new PropertySearch();
-        
+
         $form = $this->createForm(PropertySearchType::class, $search);
 
         $form->handleRequest($request);
-        
+
         // if ($form->isSubmitted() && $form->isValid()) { 
-            
+
         // }
 
         $properties = $paginator->paginate(  //il prend en param la requete , la page courante et la limite 
@@ -60,31 +65,31 @@ class PropertyController extends AbstractController {
         //          ->setCity('Ivry-Sur-Sein')
         //          ->setAdress('80 Avenu de verdun')
         //          ->setPostalCode('94200');
-        
+
         // $this->entityManager->persist($property);
 
         // $this->entityManager->flush();
 
-        return $this->render('property/index.html.twig',[
-            
+        return $this->render('property/index.html.twig', [
+
             'current_menu' => 'properties',
             'properties' => $properties,
             'form' => $form->createView()
         ]);
     }
 
-    #[Route('/biens/{slug}/{id}', name: "property.show", requirements: ["slug" => "[a-z0-9\-]*"])] 
+    #[Route('/biens/{slug}/{id}', name: "property.show", requirements: ["slug" => "[a-z0-9\-]*"])]
 
-    public function show($id, string $slug ): Response
+    public function show($id, string $slug, Request $request): Response
     {
-        $property = $this->repository->find($id);    
 
-        // dump($property->getId());
-           // comunique avec la bd pour find la propery avec l'id passer en param
+        $property = $this->repository->find($id);
+
+        // comunique avec la bd pour find la propery avec l'id passer en param
         // au lieu d'utiliser le repository->find() on a injecter directement l'entity Property et ensuite il detectera au niveau de la route le id 
         // et fera automatiquement le repository->find() a notre place
 
-        if($property->getSlug() != $slug ){
+        if ($property->getSlug() != $slug) {
 
             return $this->redirectToRoute('property.show', [  // petite remarque , on fait un return sur le redirectToRoute car elle renvoie un object de type Response
                 'id' => $property->getId(),
@@ -93,9 +98,30 @@ class PropertyController extends AbstractController {
             ]);
         }
 
-        return $this->render('property/show.html.twig',[
+        $contact = new Contact();
+
+        $contact->setProperty($property);
+
+        $form = $this->createForm(ContactType::class, $contact);
+
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) { 
+            
+            $this->addFlash('success', 'Votre email a bien etet envoyer');
+            
+            return $this->redirectToRoute('property.show', [
+                'id' => $property->getId(),
+                'slug' => $property->getSlug()
+            ]);
+        }
+
+
+
+        return $this->render('property/show.html.twig', [
             'current_menu' => 'properties',
-            'property' => $property
+            'property' => $property,
+            'form' => $form->createView()
         ]);
     }
 }

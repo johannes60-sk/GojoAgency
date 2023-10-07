@@ -9,12 +9,16 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Cocur\Slugify\Slugify;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Mime\Message;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: PropertyRepository::class)]
 #[UniqueEntity('title')]
+#[Vich\Uploadable]
 class Property
 {
     const HEAT = [
@@ -27,6 +31,13 @@ class Property
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $fileName = null;
+
+    #[Assert\Image(mimeTypes: ["image/jpeg"])]
+    #[Vich\UploadableField(mapping: 'property_image', fileNameProperty: 'fileName')]
+    private ?File $imageFile = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Length(min:5, max:255)]
@@ -73,10 +84,14 @@ class Property
     #[ORM\ManyToMany(targetEntity: Option::class, inversedBy: 'properties')]
     private Collection $options;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updated_at = null;
+
     public function __construct()
     {
 
         $this->created_at = new DateTimeImmutable();
+        // $this->updated_at = new DateTimeImmutable();
         $this->options = new ArrayCollection();
     }
 
@@ -284,6 +299,49 @@ class Property
         if ($this->options->removeElement($option)) {
             $option->removeProperty($this);
         }
+
+        return $this;
+    }
+
+    public function getFilename(): ?string
+    {
+
+        return $this->fileName;
+    }
+
+    public function setFilename(?string $filename): Property
+    {
+
+        $this->fileName = $filename;
+
+        return $this;
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile; 
+    }
+
+    public function setImageFile(?File $imageFile): Property
+    {
+        $this->imageFile = $imageFile;
+
+        if ($this->imageFile instanceof UploadedFile) {
+            
+            $this->updated_at = new \DateTimeImmutable('now');
+        }
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updated_at): static
+    {
+        $this->updated_at = $updated_at;
 
         return $this;
     }
