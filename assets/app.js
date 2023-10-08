@@ -48,4 +48,68 @@ if ($successAlert.length > 0) {
     }, 5000); 
 }
 
+// Suppression des elements
 
+document.querySelectorAll('[data-delete]').forEach(a => {
+    a.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const token = a.dataset.token;
+
+        fetch(a.getAttribute('href'), {
+            
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            },
+            // body: JSON.stringify({'_token': a.dataset.token})
+            
+        })
+        .then(response =>  response.json())
+        .then(data => {
+
+            console.log('data', data)
+
+            if(data.success){
+                alert('success')
+                a.parentNode.removeChild(a);
+                // a.parentNode.parentNode.removeChild(a.parentNode)
+            }else{
+                alert('erreur ')
+            }
+        })
+        .catch(e => alert(e))
+    })
+});
+
+// $(function() {
+
+//     $('.delete-button').on('click' ,function(event) {
+//         event.preventDefault();  
+
+//         var deleteUrl = $(this).attr('href');
+//         var csrfToken = $(this).data('token');
+
+//         console.log('deleteUrl', deleteUrl)
+//         console.log('csrfToken', csrfToken)
+
+//         $.ajax({
+//             url: deleteUrl,
+//             type: 'POST',
+//             data: {
+//                 'csrf_token': csrfToken,
+//                 _method: 'DELETE'
+//             },
+//             success: function(response) {
+//                 // Traitez la réponse si nécessaire
+//                 console.log('Suppression réussie :', response);
+//             },
+//             error: function(error) {
+//                 // Traitez les erreurs si nécessaire
+//                 console.error('Erreur lors de la suppression :', error);
+//             }
+//         });
+//     });
+// });

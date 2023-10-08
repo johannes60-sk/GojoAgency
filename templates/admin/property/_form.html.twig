@@ -1,39 +1,57 @@
-
 {{ form_start(form) }}
-         
-        <div class="row">
-		<div class="col-md-4">{{ form_row(form.title) }}</div>
-		<div class="col-md-4">{{ form_row(form.surface) }}</div>
-		<div class="col-md-4">{{ form_row(form.price) }}</div>
-	    </div>
 
-        <div class="row">
-            <div class="col-md-3">{{ form_row(form.rooms) }}</div>
-            <div class="col-md-3">{{ form_row(form.bedrooms) }}</div>
-            <div class="col-md-3">{{ form_row(form.heat) }}</div>
-            <div class="col-md-3">{{ form_row(form.floor) }}</div>
-        </div>
+<div class="row">
+	<div class="col-md-8">
+		<div class="row">
+			<div class="col-md-4">{{ form_row(form.title) }}</div>
+			<div class="col-md-4">{{ form_row(form.surface) }}</div>
+			<div class="col-md-4">{{ form_row(form.price) }}</div>
+		</div>
+	</div>
 
-        <div class="row">
-            <div class="col md-4">{{ form_row(form.imageFile) }}</div>
-            <div class="col md-2">{{ form_row(form.adress) }}</div>
-            <div class="col-md-2">{{ form_row(form.city) }}</div>
-            <div class="col-md-2">{{ form_row(form.postal_code) }}</div>
-            <div class="col-md-2" style="padding-top: 35px">{{ form_row(form.sold) }}</div>
-        </div> 
+	<div class="col-md-4">
+		<div class="row flex flex-wrap justify-content-start ">
+			{% for picture in property.pictures %}
 
-        <div class="row">
-            <div class="col md-8 option-select">{{ form_row(form.description) }}</div>
-        </div>
+				<div class="col" style="width: 100%;  ">
+					<img src="{{ vich_uploader_asset(picture, 'imageFile')}}" height="60px" alt="">
+					<a  href="{{ path('admin.picture.delete', {id: picture.id}) }}"  class="btn btn-danger delete-button" 
+                    data-delete  data-token="{{ csrf_token('delete' ~ picture.id)}}" >Supprimer</a>
+				</div>
 
-        <div class="row">
-            <div class="col md-8">{{ form_row(form.options) }}</div>
-        </div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
 
-        {# {{ form_rest(form) }}   #}
 
-     {# ici on met un boutton par defaut si c'est pas definie dans le include au niveau des autre pages ou on a inclu le _form.html.twig #}
+<div class="row">
+	<div class="col-md-3">{{ form_row(form.rooms) }}</div>
+	<div class="col-md-3">{{ form_row(form.bedrooms) }}</div>
+	<div class="col-md-3">{{ form_row(form.heat) }}</div>
+	<div class="col-md-3">{{ form_row(form.floor) }}</div>
+</div>
 
-         <button class="btn btn-primary my-3">{{ button|default('creer') }}</button>  
+<div class="row">
+	<div class="col md-4">{{ form_row(form.picturesFiles) }}</div>
+	<div class="col md-2">{{ form_row(form.adress) }}</div>
+	<div class="col-md-2">{{ form_row(form.city) }}</div>
+	<div class="col-md-2">{{ form_row(form.postal_code) }}</div>
+	<div class="col-md-2" style="padding-top: 35px">{{ form_row(form.sold) }}</div>
+</div>
 
-        {{ form_end(form) }} 
+<div class="row">
+	<div class="col md-8 option-select">{{ form_row(form.description) }}</div>
+</div>
+
+<div class="row">
+	<div class="col md-8">{{ form_row(form.options) }}</div>
+</div>
+
+{# {{ form_rest(form) }}   #}
+
+{# ici on met un boutton par defaut si c'est pas definie dans le include au niveau des autre pages ou on a inclu le _form.html.twig #}
+
+<button class="btn btn-primary my-3">{{ button|default('creer') }}</button>
+
+{{ form_end(form) }}

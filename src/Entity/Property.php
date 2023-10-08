@@ -18,7 +18,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: PropertyRepository::class)]
 #[UniqueEntity('title')]
-#[Vich\Uploadable]
+
 class Property
 {
     const HEAT = [
@@ -32,12 +32,12 @@ class Property
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?string $fileName = null;
+    // #[ORM\Column(nullable: true)]
+    // private ?string $fileName = null;
 
-    #[Assert\Image(mimeTypes: ["image/jpeg"])]
-    #[Vich\UploadableField(mapping: 'property_image', fileNameProperty: 'fileName')]
-    private ?File $imageFile = null;
+    // #[Assert\Image(mimeTypes: ["image/jpeg"])]
+    // #[Vich\UploadableField(mapping: 'property_image', fileNameProperty: 'fileName')]
+    // private ?File $imageFile = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Length(min:5, max:255)]
@@ -87,12 +87,27 @@ class Property
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
+    #[ORM\OneToMany(mappedBy: 'property', targetEntity: Picture::class, orphanRemoval: true, cascade: ['persist'])]
+    private Collection $pictures;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\All( [new Assert\Image(['mimeTypes' => 'image/jpeg'])])]
+
+    private ?array $picturesFiles = [];
+
+    #[ORM\Column(scale: 4, precision: 6)]
+    private ?float $lat = null;
+
+    #[ORM\Column(scale: 4, precision: 7)]
+    private ?float $lng = null;
+
     public function __construct()
     {
 
         $this->created_at = new DateTimeImmutable();
         // $this->updated_at = new DateTimeImmutable();
         $this->options = new ArrayCollection();
+        $this->pictures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -303,36 +318,36 @@ class Property
         return $this;
     }
 
-    public function getFilename(): ?string
-    {
+    // public function getFilename(): ?string
+    // {
 
-        return $this->fileName;
-    }
+    //     return $this->fileName;
+    // }
 
-    public function setFilename(?string $filename): Property
-    {
+    // public function setFilename(?string $filename): Property
+    // {
 
-        $this->fileName = $filename;
+    //     $this->fileName = $filename;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getImageFile(): ?File
-    {
-        return $this->imageFile; 
-    }
+    // public function getImageFile(): ?File
+    // {
+    //     return $this->imageFile; 
+    // }
 
-    public function setImageFile(?File $imageFile): Property
-    {
-        $this->imageFile = $imageFile;
+    // public function setImageFile(?File $imageFile): Property
+    // {
+    //     $this->imageFile = $imageFile;
 
-        if ($this->imageFile instanceof UploadedFile) {
+    //     if ($this->imageFile instanceof UploadedFile) {
             
-            $this->updated_at = new \DateTimeImmutable('now');
-        }
+    //         $this->updated_at = new \DateTimeImmutable('now');
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getUpdatedAt(): ?\DateTimeImmutable
     {
@@ -342,6 +357,88 @@ class Property
     public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Picture>
+     */
+    public function getPictures(): Collection
+    {
+        return $this->pictures;
+    }
+
+    public function getPicture(): ?Picture
+    {
+        if($this->pictures->isEmpty()){
+            return null;
+        }
+        
+        return $this->pictures->first();
+    }
+
+    public function addPicture(Picture $picture): static
+    {
+        if (!$this->pictures->contains($picture)) {
+            $this->pictures->add($picture);
+            $picture->setProperty($this);
+        }
+
+        return $this;
+    }
+
+    public function removePicture(Picture $picture): static
+    {
+        if ($this->pictures->removeElement($picture)) {
+            // set the owning side to null (unless already changed)
+            if ($picture->getProperty() === $this) {
+                $picture->setProperty(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getPicturesFiles() 
+    {
+        return $this->picturesFiles;
+    }
+
+    public function setPicturesFiles(?array $picturesFiles): static
+    {
+        foreach($picturesFiles as $picturesFile){
+            
+            $picture = new Picture();
+            $picture->setImageFile($picturesFile);
+            $this->addPicture($picture);
+        }
+
+        $this->picturesFiles = $picturesFiles;
+
+        return $this;
+    }
+
+    public function getLat(): ?float
+    {
+        return $this->lat;
+    }
+
+    public function setLat(float $lat): static
+    {
+        $this->lat = $lat;
+
+        return $this;
+    }
+
+    public function getLng(): ?float
+    {
+        return $this->lng;
+    }
+
+    public function setLng(float $lng): static
+    {
+        $this->lng = $lng;
 
         return $this;
     }

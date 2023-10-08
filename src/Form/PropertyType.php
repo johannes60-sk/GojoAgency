@@ -33,12 +33,15 @@ class PropertyType extends AbstractType
                     'class' => 'select-tags'
                 ]
             ])
-            ->add('imageFile', FileType::class, [
-                'required' => false
+            ->add('picturesFiles', FileType::class, [
+                'required' => false,
+                'multiple' => true
             ])
             ->add('city', null,  ['label' => 'ville'])  //prend en params le label, type de champ et un tableau d'option
             ->add('adress')
             ->add('postal_code')
+            ->add('lat')
+            ->add('lng')
             ->add('sold')
             // ->add('created_at')
         ;

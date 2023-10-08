@@ -3,8 +3,8 @@
 {# | imagine_filter('thumb') #}
 <div class="card shadow-sm">
 
-	{% if property.filename %}
-		<img src="{{vich_uploader_asset(property, 'imageFile') }} " alt="card-img-top" style="width: 100%; height: 200px;">
+	{% if property.picture %}
+		<img src="{{vich_uploader_asset(property.picture, 'imageFile') }} " alt="card-img-top" style="width: 100%; height: 200px;">
 
 	{% else %}
 		{# <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveaspectratio="xMidYMid slice" focusable="false">
